@@ -18,15 +18,16 @@ public class ScheduleController {
 
     // Lv.1 일정 CRUD
     // 생성
-    @PostMapping("/schedules")
+    @PostMapping("/users/{userId}/schedules")
     public ResponseEntity<CreateScheduleResponse> createSchedule(
+            @PathVariable Long userId,
             @RequestBody CreateScheduleRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(userId, request));
     }
 
     // 전체 조회
-    @GetMapping("/schedules")
+    @GetMapping("schedules")
     public ResponseEntity<List<GetAllScheduleResponse>> getAllSchedule() {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAll());
     }

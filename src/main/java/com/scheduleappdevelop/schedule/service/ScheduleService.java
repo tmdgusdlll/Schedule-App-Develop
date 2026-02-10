@@ -3,6 +3,8 @@ package com.scheduleappdevelop.schedule.service;
 import com.scheduleappdevelop.schedule.dto.*;
 import com.scheduleappdevelop.schedule.entity.Schedule;
 import com.scheduleappdevelop.schedule.repository.ScheduleRepository;
+import com.scheduleappdevelop.user.entity.User;
+import com.scheduleappdevelop.user.repository.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,25 +12,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
 
     // 생성 (POST 요청을 받은 Controller가 Service에게 넘겨서 실제로 로직이 실행되는 곳)
 
     @Transactional
-    public CreateScheduleResponse save(CreateScheduleRequest request) {
+    public CreateScheduleResponse save(Long userId, CreateScheduleRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalStateException("없는 유저입니다.")
+        );
         Schedule schedule = new Schedule(
-                request.getAuthor(),
+                user,
                 request.getTitle(),
                 request.getContent());
         Schedule savedSchedule = scheduleRepository.save(schedule);
         return new CreateScheduleResponse(
                 savedSchedule.getId(),
-                savedSchedule.getAuthor(),
+                savedSchedule.getUser().getId(),
+                savedSchedule.getUser().getName(),
                 savedSchedule.getTitle(),
                 savedSchedule.getContent(),
                 savedSchedule.getCreatedAt(),
@@ -43,7 +51,8 @@ public class ScheduleService {
         for (Schedule schedule : schedules) {
             GetAllScheduleResponse dto = new GetAllScheduleResponse(
                     schedule.getId(),
-                    schedule.getAuthor(),
+                    schedule.getUser().getId(),
+                    schedule.getUser().getName(),
                     schedule.getTitle()
 //                    schedule.getContent(),
 //                    schedule.getCreatedAt(),
@@ -61,7 +70,8 @@ public class ScheduleService {
         );
         return new GetOneScheduleResponse(
                 schedule.getId(),
-                schedule.getAuthor(),
+                schedule.getUser().getId(),
+                schedule.getUser().getName(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getCreatedAt(),
@@ -74,10 +84,11 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("없는 일정입니다.")
         );
-        schedule.update(request.getAuthor(), request.getTitle(), request.getContent());
+        schedule.update(request.getTitle(), request.getContent());
         return new UpdateScheduleResponse(
                 schedule.getId(),
-                schedule.getAuthor(),
+                schedule.getUser().getId(),
+                schedule.getUser().getName(),
                 schedule.getTitle(),
                 schedule.getContent(),
                 schedule.getCreatedAt(),

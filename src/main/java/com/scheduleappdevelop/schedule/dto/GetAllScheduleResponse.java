@@ -8,15 +8,17 @@ import java.time.LocalDateTime;
 public class GetAllScheduleResponse {
 
     private final Long id;
-    private final String author;
+    private final Long userId;
+    private final String username;
     private final String title;
 //    private final String content;
 //    private final LocalDateTime createdAt;
 //    private final LocalDateTime modifiedAt;
 
-    public GetAllScheduleResponse(Long id, String author, String title) {
+    public GetAllScheduleResponse(Long id, Long userId, String username, String title) {
         this.id = id;
-        this.author = author;
+        this.userId = userId;
+        this.username = username;
         this.title = title;
 //        this.content = content;
 //        this.createdAt = createdAt;

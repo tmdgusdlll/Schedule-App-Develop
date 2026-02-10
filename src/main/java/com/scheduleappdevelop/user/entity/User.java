@@ -21,19 +21,17 @@ public class User extends BaseEntity {
     private String name;
     private String email;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "schedule_id", nullable = false)
-    private Schedule schedule;
+//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+//    @JoinColumn(name = "schedule_id", nullable = false)
+//    private Schedule schedule;
 
-    public User(String name, String email, Schedule schedule) {
+    public User(String name, String email) {
         this.name = name;
         this.email = email;
-        this.schedule = schedule;
     }
 
-    public void update(String name, String email, Schedule schedule) {
+    public void update(String name, String email) {
         this.name = name;
         this.email = email;
-        this.schedule = schedule;
     }
 }
