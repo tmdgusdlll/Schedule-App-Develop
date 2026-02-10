@@ -1,9 +1,6 @@
 package com.scheduleappdevelop.schedule.service;
 
-import com.scheduleappdevelop.schedule.dto.CreateScheduleRequest;
-import com.scheduleappdevelop.schedule.dto.CreateScheduleResponse;
-import com.scheduleappdevelop.schedule.dto.GetAllScheduleResponse;
-import com.scheduleappdevelop.schedule.dto.GetOneScheduleResponse;
+import com.scheduleappdevelop.schedule.dto.*;
 import com.scheduleappdevelop.schedule.entity.Schedule;
 import com.scheduleappdevelop.schedule.repository.ScheduleRepository;
 import lombok.Getter;
@@ -55,11 +52,27 @@ public class ScheduleService {
         return dtos;
     }
 
+    @Transactional(readOnly = true)
     public GetOneScheduleResponse findOne(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("없는 일정입니다.")
         );
         return new GetOneScheduleResponse(
+                schedule.getId(),
+                schedule.getAuthor(),
+                schedule.getTitle(),
+                schedule.getContent(),
+                schedule.getCreatedAt(),
+                schedule.getModifiedAt()
+        );
+    }
+
+    public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new IllegalStateException("없는 일정입니다.")
+        );
+        schedule.update(request.getAuthor(), request.getTitle(), request.getContent());
+        return new UpdateScheduleResponse(
                 schedule.getId(),
                 schedule.getAuthor(),
                 schedule.getTitle(),
