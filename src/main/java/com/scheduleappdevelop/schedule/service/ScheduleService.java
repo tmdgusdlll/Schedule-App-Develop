@@ -5,18 +5,20 @@ import com.scheduleappdevelop.schedule.entity.Schedule;
 import com.scheduleappdevelop.schedule.repository.ScheduleRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
+@Service
 @RequiredArgsConstructor
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
 
     // 생성 (POST 요청을 받은 Controller가 Service에게 넘겨서 실제로 로직이 실행되는 곳)
+
     @Transactional
     public CreateScheduleResponse save(CreateScheduleRequest request) {
         Schedule schedule = new Schedule(
@@ -67,6 +69,7 @@ public class ScheduleService {
         );
     }
 
+    @Transactional
     public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("없는 일정입니다.")
@@ -82,6 +85,7 @@ public class ScheduleService {
         );
     }
 
+    @Transactional
     public void deleteSchedule(Long scheduleId) {
         boolean existence = scheduleRepository.existsById(scheduleId);
         if (!existence) {

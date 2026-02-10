@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Getter
+@RestController
 @RequiredArgsConstructor
 public class ScheduleController {
 
