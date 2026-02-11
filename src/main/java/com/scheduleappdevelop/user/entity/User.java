@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     private String name;
     private String email;
     // Lv.3 회원가입 (비밀번호 추가) / 8글자 이상
-    @Size(min = 8, max = 16)
+    @Column(nullable = false)
     private String password;
 
     public User(String name, String email, String password) {
@@ -32,7 +32,8 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
-    public void update(String name) {
+    public void update(String name, String email) {
         this.name = name;
+        this.email = email;
     }
 }

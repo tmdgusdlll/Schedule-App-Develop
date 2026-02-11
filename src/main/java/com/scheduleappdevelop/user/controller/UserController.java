@@ -1,10 +1,15 @@
 package com.scheduleappdevelop.user.controller;
 
 import com.scheduleappdevelop.user.dto.*;
+import com.scheduleappdevelop.user.entity.User;
 import com.scheduleappdevelop.user.repository.UserRepository;
 import com.scheduleappdevelop.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
+import org.hibernate.Session;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +22,22 @@ public class UserController {
     private final UserService userService;
 
     // Lv.2 유저 CRUD
-    // 생성
-    @PostMapping("/users")
-    public ResponseEntity<CreateUserResponse> create(
-            @RequestBody CreateUserRequest request
+    // 생성 => 회원가입
+    @PostMapping("/register")
+    public ResponseEntity<CreateUserResponse> register(
+            @Valid @RequestBody CreateUserRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(request));
+    }
+
+    // 로그인 (이메일 + 비밀번호)
+    @PostMapping("/login")
+    public ResponseEntity<Void> login(
+            @Valid @RequestBody LoginRequest request, HttpSession session
+    ) {
+        SessionUser sessionUser = userService.login(request);
+        session.setAttribute("login_user", sessionUser);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     // 전체조회

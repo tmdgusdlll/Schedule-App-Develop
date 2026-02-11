@@ -17,7 +17,6 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     // Lv.1 일정 CRUD
-    // 생성 TODO: userId를 받아서 생성하는 게 맞나..? 과제 의도를 모르겠네..
     @PostMapping("/schedules")
     public ResponseEntity<CreateScheduleResponse> createSchedule(
             @RequestBody CreateScheduleRequest request

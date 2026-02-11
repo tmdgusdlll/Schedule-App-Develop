@@ -1,10 +1,16 @@
 package com.scheduleappdevelop.user.service;
 
+import com.scheduleappdevelop.exception.AlreadyExistEmailException;
+import com.scheduleappdevelop.exception.LoginUnauthorizedException;
+import com.scheduleappdevelop.exception.UserNotFoundException;
 import com.scheduleappdevelop.schedule.entity.Schedule;
 import com.scheduleappdevelop.schedule.repository.ScheduleRepository;
 import com.scheduleappdevelop.user.dto.*;
 import com.scheduleappdevelop.user.entity.User;
 import com.scheduleappdevelop.user.repository.UserRepository;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,9 +24,15 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
 
+    // TODO: 로그인구현하면서 생성이 회원가입으로 바뀜. 따라서 리팩토링 필요/ 이미 존재하는 (회원)이메일인지 확인 할 것
     @Transactional
-    public CreateUserResponse save(CreateUserRequest request) {
-        User user = new User(request.getName(), request.getEmail());
+    public CreateUserResponse register(CreateUserRequest request) {
+        // 이미 존재하는 회원인지 이메일로 확인
+        boolean existence = userRepository.existsByEmail(request.getEmail());
+        if (existence) {
+            throw new AlreadyExistEmailException("이미 존재하는 이메일입니다.");
+        }
+        User user = new User(request.getName(), request.getEmail(), request.getPassword());
         User savedUser = userRepository.save(user);
         return new CreateUserResponse(
                 savedUser.getId(),
@@ -28,6 +40,23 @@ public class UserService {
                 savedUser.getEmail(),
                 savedUser.getCreatedAt(),
                 savedUser.getModifiedAt()
+        );
+    }
+
+    // 로그인 로직
+    @Transactional(readOnly = true)
+    public SessionUser login(LoginRequest request) {
+        // 이메일로 유효한지
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new LoginUnauthorizedException("유효하지 않은 이메일입니다."));
+                // 비밀번호 대조
+        if (!user.getPassword().equals(request.getPassword())) {
+            throw new LoginUnauthorizedException("비밀번호가 일치하지 않습니다.");
+        }
+        return new SessionUser(
+                user.getId(),
+                user.getEmail(),
+                user.getPassword()
         );
     }
 
@@ -48,7 +77,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public GetOneUserResponse findOne(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("없는 유저입니다.")
+                () -> new UserNotFoundException("없는 유저입니다.")
         );
         return new GetOneUserResponse(
                 user.getId(),
@@ -60,16 +89,17 @@ public class UserService {
     @Transactional
     public UpdateUserResponse update(Long userId, UpdateUserRequest request) {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalStateException("없는 유저입니다.")
+                () -> new UserNotFoundException("없는 유저입니다.")
         );
-        user.update(request.getName());
+        user.update(request.getName(), request.getEmail());
         return new UpdateUserResponse(user.getId(),user.getName(),user.getEmail());
     }
 
+    @Transactional
     public void delete(Long userId) {
         boolean existence = userRepository.existsById(userId);
         if (!existence) {
-            throw new IllegalStateException("없는 유저입니다.");
+            throw new UserNotFoundException("없는 유저입니다.");
         }
         userRepository.deleteById(userId);
     }
