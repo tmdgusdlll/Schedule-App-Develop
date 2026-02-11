@@ -1,5 +1,6 @@
 package com.scheduleappdevelop.user.dto;
 
+import com.scheduleappdevelop.user.entity.User;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -13,12 +14,11 @@ public class CreateUserResponse {
     private final LocalDateTime createdAt;
     private final LocalDateTime modifiedAt;
 
-    public CreateUserResponse(Long userId, String name, String email,
-                              LocalDateTime createdAt, LocalDateTime modifiedAt) {
-        this.userId = userId;
-        this.name = name;
-        this.email = email;
-        this.createdAt = createdAt;
-        this.modifiedAt = modifiedAt;
+    public CreateUserResponse(User user) {
+        this.userId = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.createdAt = user.getCreatedAt();
+        this.modifiedAt = user.getModifiedAt();
     }
 }

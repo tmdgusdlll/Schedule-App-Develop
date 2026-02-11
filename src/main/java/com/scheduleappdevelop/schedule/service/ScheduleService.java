@@ -1,5 +1,6 @@
 package com.scheduleappdevelop.schedule.service;
 
+import com.scheduleappdevelop.exception.LoginUnauthorizedException;
 import com.scheduleappdevelop.exception.ScheduleNotFoundException;
 import com.scheduleappdevelop.exception.UserNotFoundException;
 import com.scheduleappdevelop.schedule.dto.*;
@@ -70,6 +71,10 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new ScheduleNotFoundException("없는 일정입니다.")
         );
+        // 수정시 비밀번호 일치한지 확인
+        if (!schedule.getUser().getPassword().equals(request.getPassword())) {
+            throw new LoginUnauthorizedException("비밀번호가 일치하지 않습니다.");
+        }
         schedule.update(request.getTitle(), request.getContent());
         return new UpdateScheduleResponse(schedule);
     }
