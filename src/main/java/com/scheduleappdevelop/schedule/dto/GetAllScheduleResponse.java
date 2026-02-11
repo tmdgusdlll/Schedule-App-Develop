@@ -1,13 +1,15 @@
 package com.scheduleappdevelop.schedule.dto;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@JsonPropertyOrder({"scheduleId", "userId", "username", "title"})
 public class GetAllScheduleResponse {
 
-    private final Long id;
+    private final Long scheduleId;
     private final Long userId;
     private final String username;
     private final String title;
@@ -16,7 +18,7 @@ public class GetAllScheduleResponse {
 //    private final LocalDateTime modifiedAt;
 
     public GetAllScheduleResponse(Long id, Long userId, String username, String title) {
-        this.id = id;
+        this.scheduleId = id;
         this.userId = userId;
         this.username = username;
         this.title = title;

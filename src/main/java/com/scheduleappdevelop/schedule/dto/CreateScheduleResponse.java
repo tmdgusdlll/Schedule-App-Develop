@@ -1,5 +1,6 @@
 package com.scheduleappdevelop.schedule.dto;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.scheduleappdevelop.schedule.entity.Schedule;
 import lombok.Getter;
 
@@ -7,9 +8,10 @@ import java.time.LocalDateTime;
 
 // POST로 들어온 요청에 대한 응답 dto
 @Getter
+@JsonPropertyOrder({"scheduleId", "userId", "username", "title", "content", "createdAt", "modifiedAt"})
 public class CreateScheduleResponse {
 
-    private final Long id;
+    private final Long scheduleId;
     private final Long userId;
     private final String username;
     private final String title;
@@ -29,7 +31,7 @@ public class CreateScheduleResponse {
 //    }
 
     public CreateScheduleResponse(Schedule schedule) {
-        this.id = schedule.getId();
+        this.scheduleId = schedule.getId();
         this.userId = schedule.getUser().getId();
         this.username = schedule.getUser().getName();
         this.title = schedule.getTitle();
