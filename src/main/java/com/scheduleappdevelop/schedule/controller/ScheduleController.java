@@ -17,13 +17,12 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     // Lv.1 일정 CRUD
-    // 생성
-    @PostMapping("/users/{userId}/schedules")
+    // 생성 TODO: userId를 받아서 생성하는 게 맞나..? 과제 의도를 모르겠네..
+    @PostMapping("/schedules")
     public ResponseEntity<CreateScheduleResponse> createSchedule(
-            @PathVariable Long userId,
             @RequestBody CreateScheduleRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(userId, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(request));
     }
 
     // 전체 조회
@@ -58,3 +57,5 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
+
+// TODO: 유저의 모든 일정 조회할 수 있도록 구현하기.

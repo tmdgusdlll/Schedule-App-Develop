@@ -24,8 +24,8 @@ public class ScheduleService {
     // 생성 (POST 요청을 받은 Controller가 Service에게 넘겨서 실제로 로직이 실행되는 곳)
 
     @Transactional
-    public CreateScheduleResponse save(Long userId, CreateScheduleRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(
+    public CreateScheduleResponse save(CreateScheduleRequest request) {
+        User user = userRepository.findById(request.getUserId()).orElseThrow(
                 () -> new IllegalStateException("없는 유저입니다.")
         );
         Schedule schedule = new Schedule(
@@ -33,15 +33,7 @@ public class ScheduleService {
                 request.getTitle(),
                 request.getContent());
         Schedule savedSchedule = scheduleRepository.save(schedule);
-        return new CreateScheduleResponse(
-                savedSchedule.getId(),
-                savedSchedule.getUser().getId(),
-                savedSchedule.getUser().getName(),
-                savedSchedule.getTitle(),
-                savedSchedule.getContent(),
-                savedSchedule.getCreatedAt(),
-                savedSchedule.getModifiedAt()
-        );
+        return new CreateScheduleResponse(savedSchedule);
     }
 
     @Transactional(readOnly = true)
@@ -68,15 +60,7 @@ public class ScheduleService {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
                 () -> new IllegalStateException("없는 일정입니다.")
         );
-        return new GetOneScheduleResponse(
-                schedule.getId(),
-                schedule.getUser().getId(),
-                schedule.getUser().getName(),
-                schedule.getTitle(),
-                schedule.getContent(),
-                schedule.getCreatedAt(),
-                schedule.getModifiedAt()
-        );
+        return new GetOneScheduleResponse(schedule);
     }
 
     @Transactional
@@ -85,15 +69,7 @@ public class ScheduleService {
                 () -> new IllegalStateException("없는 일정입니다.")
         );
         schedule.update(request.getTitle(), request.getContent());
-        return new UpdateScheduleResponse(
-                schedule.getId(),
-                schedule.getUser().getId(),
-                schedule.getUser().getName(),
-                schedule.getTitle(),
-                schedule.getContent(),
-                schedule.getCreatedAt(),
-                schedule.getModifiedAt()
-        );
+        return new UpdateScheduleResponse(schedule);
     }
 
     @Transactional

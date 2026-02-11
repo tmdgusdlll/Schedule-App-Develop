@@ -2,10 +2,7 @@ package com.scheduleappdevelop.user.service;
 
 import com.scheduleappdevelop.schedule.entity.Schedule;
 import com.scheduleappdevelop.schedule.repository.ScheduleRepository;
-import com.scheduleappdevelop.user.dto.CreateUserRequest;
-import com.scheduleappdevelop.user.dto.CreateUserResponse;
-import com.scheduleappdevelop.user.dto.GetAllUserResponse;
-import com.scheduleappdevelop.user.dto.GetOneUserResponse;
+import com.scheduleappdevelop.user.dto.*;
 import com.scheduleappdevelop.user.entity.User;
 import com.scheduleappdevelop.user.repository.UserRepository;
 import lombok.Getter;
@@ -58,6 +55,23 @@ public class UserService {
                 user.getName(),
                 user.getEmail()
         );
+    }
+
+    @Transactional
+    public UpdateUserResponse update(Long userId, UpdateUserRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalStateException("없는 유저입니다.")
+        );
+        user.update(request.getName());
+        return new UpdateUserResponse(user.getId(),user.getName(),user.getEmail());
+    }
+
+    public void delete(Long userId) {
+        boolean existence = userRepository.existsById(userId);
+        if (!existence) {
+            throw new IllegalStateException("없는 유저입니다.");
+        }
+        userRepository.deleteById(userId);
     }
 }
 

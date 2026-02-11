@@ -15,23 +15,20 @@ public class Schedule extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-//    private String author;
     private String title;
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false) // 일정은 유저없이는 존재할 수 없다.
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User user; // 유저 고유 식별자 가짐.
 
     public Schedule(User user, String title, String content) {
-//        this.author = author;
         this.title = title;
         this.content = content;
         this.user = user;
     }
 
     public void update(String title, String content) {
-//        this.author = author;
         this.title = title;
         this.content = content;
     }
