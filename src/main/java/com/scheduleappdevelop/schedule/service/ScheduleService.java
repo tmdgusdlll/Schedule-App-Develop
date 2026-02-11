@@ -10,6 +10,10 @@ import com.scheduleappdevelop.user.entity.User;
 import com.scheduleappdevelop.user.repository.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +27,12 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+
+    @Transactional(readOnly = true)
+    public Page<Schedule> GetSchedulesWithPaging(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("modifiedAt").descending()); // 페이지 번호와 크기 설정
+        return scheduleRepository.findAll(pageable); // 페이징된 결과 반환
+    }
 
     // (POST 요청을 받은 Controller가 Service에게 넘겨서 실제로 로직이 실행되는 곳)
 

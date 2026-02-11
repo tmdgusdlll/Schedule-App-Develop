@@ -1,9 +1,11 @@
 package com.scheduleappdevelop.schedule.controller;
 
 import com.scheduleappdevelop.schedule.dto.*;
+import com.scheduleappdevelop.schedule.entity.Schedule;
 import com.scheduleappdevelop.schedule.service.ScheduleService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,15 @@ public class ScheduleController {
             @RequestBody CreateScheduleRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(request));
+    }
+
+    // 페이징 조회
+    @GetMapping("/schedulesPage")
+    public Page<Schedule> getSchedules(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return scheduleService.GetSchedulesWithPaging(page, size);
     }
 
     // 전체 조회
