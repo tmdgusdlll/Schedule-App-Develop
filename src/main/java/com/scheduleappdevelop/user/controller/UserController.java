@@ -64,6 +64,7 @@ public class UserController {
     }
 
     // 삭제
+    // TODO: 게시글이나 댓글을 단 유저는 삭제가 안 됨. cascade??, soft delete 해보자
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteUser(
             @PathVariable Long userId

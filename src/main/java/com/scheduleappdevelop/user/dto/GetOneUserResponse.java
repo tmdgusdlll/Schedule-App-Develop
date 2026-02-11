@@ -1,10 +1,12 @@
 package com.scheduleappdevelop.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@JsonPropertyOrder({"userId", "name", "email"})
 public class GetOneUserResponse {
 
     private final Long userId;

@@ -17,6 +17,7 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     // Lv.1 일정 CRUD
+    // TODO: URL을 자세히 적고 dto에서 경로를 알려주는 게 더 나은가..?
     @PostMapping("/schedules")
     public ResponseEntity<CreateScheduleResponse> createSchedule(
             @RequestBody CreateScheduleRequest request
