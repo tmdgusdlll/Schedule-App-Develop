@@ -57,7 +57,7 @@ public class UserController {
     // 수정
     @PatchMapping("/users/{userId}")
     public ResponseEntity<UpdateUserResponse> updateUser(
-            @PathVariable Long userId,
+            @Valid @PathVariable Long userId,
             @RequestBody UpdateUserRequest request
     ) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.update(userId, request));

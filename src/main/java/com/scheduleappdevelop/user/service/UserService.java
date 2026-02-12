@@ -56,16 +56,18 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<GetAllUserResponse> findAll() {
-        List<User> users = userRepository.findAll();
-        List<GetAllUserResponse> dtos = new ArrayList<>();
-        for (User user : users) {
-            GetAllUserResponse dto = new GetAllUserResponse(
-                    user.getId(),
-                    user.getName()
-            );
-            dtos.add(dto);
-        }
-        return dtos;
+//        List<User> users = userRepository.findAll();
+//        List<GetAllUserResponse> dtos = new ArrayList<>();
+//        for (User user : users) {
+//            GetAllUserResponse dto = new GetAllUserResponse(user);
+//            dtos.add(dto);
+//        }
+//        return dtos;
+        return userRepository.findAll()
+                .stream()
+//                .map(user -> new GetAllUserResponse(user))
+                .map(GetAllUserResponse::new)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -73,11 +75,7 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("없는 유저입니다.")
         );
-        return new GetOneUserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail()
-        );
+        return new GetOneUserResponse(user);
     }
 
     @Transactional

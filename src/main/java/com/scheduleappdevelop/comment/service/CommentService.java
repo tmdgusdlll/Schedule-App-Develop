@@ -45,7 +45,7 @@ public class CommentService {
 
     // TODO: stream으로 바꿔보기
     public List<GetCommentResponse> findAll() {
-        List<Comment> comments = commentRepository.findAll();
+//        List<Comment> comments = commentRepository.findAll();
 //        List<GetCommentResponse> dtos = new ArrayList<>();
 //
 //        for (Comment comment : comments) {

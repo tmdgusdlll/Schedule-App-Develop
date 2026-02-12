@@ -1,11 +1,13 @@
 package com.scheduleappdevelop.schedule.dto;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.scheduleappdevelop.schedule.entity.Schedule;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@JsonPropertyOrder({"scheduleId", "userId", "username", "title", "content", "createdAt", "modifiedAt"})
 public class GetAllScheduleWithPageResponse {
 
     private final Long scheduleId;

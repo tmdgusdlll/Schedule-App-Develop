@@ -57,21 +57,23 @@ public class ScheduleService {
     // TODO: stream으로 바꿔보기
     @Transactional(readOnly = true)
     public List<GetAllScheduleResponse> findAll() {
-        List<Schedule> schedules = scheduleRepository.findAll();
-        List<GetAllScheduleResponse> dtos = new ArrayList<>();
-        for (Schedule schedule : schedules) {
-            GetAllScheduleResponse dto = new GetAllScheduleResponse(
-                    schedule.getId(),
-                    schedule.getUser().getId(),
-                    schedule.getUser().getName(),
-                    schedule.getTitle()
-//                    schedule.getContent(),
-//                    schedule.getCreatedAt(),
-//                    schedule.getModifiedAt()
-            );
-            dtos.add(dto);
-        }
-        return dtos;
+//        List<Schedule> schedules = scheduleRepository.findAll();
+//        List<GetAllScheduleResponse> dtos = new ArrayList<>();
+//        for (Schedule schedule : schedules) {
+//            GetAllScheduleResponse dto = new GetAllScheduleResponse(
+//                    schedule.getId(),
+//                    schedule.getUser().getId(),
+//                    schedule.getUser().getName(),
+//                    schedule.getTitle()
+//            );
+//            dtos.add(dto);
+//        }
+//        return dtos;
+        return scheduleRepository.findAll()
+                .stream()
+//                .map(schedule -> new GetAllScheduleResponse(schedule));
+                .map(GetAllScheduleResponse::new) // 람다 -> 메서드 참조
+                .toList();
     }
 
     @Transactional(readOnly = true)
