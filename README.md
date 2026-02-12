@@ -85,3 +85,9 @@ Spring Boot + Spring Data JPA 기반의 **일정 관리 API 서버**입니다.
 
 ## API 명세서
 https://nostalgic-animantarx-de5.notion.site/CH-3-API-305b42bce2db80b8b551c27d3bcd1b13
+
+---
+
+## ERD
+<img width="518" height="1534" alt="image" src="https://github.com/user-attachments/assets/1fdad0a6-b924-4fa3-b0bd-3f3e329b8964" />
+
