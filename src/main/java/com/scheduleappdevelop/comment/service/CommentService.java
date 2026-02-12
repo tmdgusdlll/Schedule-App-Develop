@@ -43,15 +43,20 @@ public class CommentService {
         return new CreateCommentResponse(savedComment);
     }
 
+    // TODO: stream으로 바꿔보기
     public List<GetCommentResponse> findAll() {
         List<Comment> comments = commentRepository.findAll();
-        List<GetCommentResponse> dtos = new ArrayList<>();
-
-        // TODO: stream 으로 리팩토링 해보기
-        for (Comment comment : comments) {
-            GetCommentResponse dto = new GetCommentResponse(comment);
-            dtos.add(dto);
-        }
-        return dtos;
+//        List<GetCommentResponse> dtos = new ArrayList<>();
+//
+//        for (Comment comment : comments) {
+//            GetCommentResponse dto = new GetCommentResponse(comment);
+//            dtos.add(dto);
+//        }
+//        return dtos;
+        return commentRepository.findAll()
+                .stream()
+//                .map(comment -> new GetCommentResponse(comment))
+                .map(GetCommentResponse::new) // 람다 -> 메서드 참조
+                .toList();
     }
 }

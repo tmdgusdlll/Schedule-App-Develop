@@ -6,6 +6,9 @@ import com.scheduleappdevelop.schedule.service.ScheduleService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,11 +32,12 @@ public class ScheduleController {
 
     // 페이징 조회
     @GetMapping("/schedulesPage")
-    public Page<Schedule> getSchedules(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+    public ResponseEntity<Page<GetAllScheduleWithPageResponse>> getSchedules(
+            // page = 0, size = 10이 디폴트 값 -> size = 5로 변경
+            @PageableDefault(size = 5, sort = "modifiedAt", direction = Sort.Direction.DESC)
+            Pageable pageable
     ) {
-        return scheduleService.GetSchedulesWithPaging(page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAllWithPage(pageable));
     }
 
     // 전체 조회

@@ -6,6 +6,4 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
-    // 페이징을 지원하는 메서드
-    Page<Schedule> findAll(Pageable pageable);
 }

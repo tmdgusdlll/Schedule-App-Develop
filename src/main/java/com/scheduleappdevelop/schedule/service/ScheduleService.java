@@ -28,10 +28,15 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
 
+    // pagination
     @Transactional(readOnly = true)
-    public Page<Schedule> GetSchedulesWithPaging(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("modifiedAt").descending()); // 페이지 번호와 크기 설정
-        return scheduleRepository.findAll(pageable); // 페이징된 결과 반환
+    public Page<GetAllScheduleWithPageResponse> findAllWithPage(Pageable pageable) {
+        Page<Schedule> schedules = scheduleRepository.findAll(pageable);
+
+        // Page 객체는 map 메서드를 제공한다.
+//        return schedules.map(schedule -> new GetAllScheduleWithPageResponse(schedule));
+        // 람다 -> 메서드 참조
+        return schedules.map(GetAllScheduleWithPageResponse::new);
     }
 
     // (POST 요청을 받은 Controller가 Service에게 넘겨서 실제로 로직이 실행되는 곳)
@@ -49,6 +54,7 @@ public class ScheduleService {
         return new CreateScheduleResponse(savedSchedule);
     }
 
+    // TODO: stream으로 바꿔보기
     @Transactional(readOnly = true)
     public List<GetAllScheduleResponse> findAll() {
         List<Schedule> schedules = scheduleRepository.findAll();
