@@ -8,6 +8,9 @@ import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.sql.ast.Clause;
 
 import java.util.Optional;
 
@@ -15,6 +18,8 @@ import java.util.Optional;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE users SET is_deleted = true WHERE id = ?") // softdelete (삭제가 업데이트로)
+@SQLRestriction("is_deleted = false")
 public class User extends BaseEntity {
 
     @Id
@@ -25,6 +30,9 @@ public class User extends BaseEntity {
     // Lv.3 회원가입 (비밀번호 추가) / 8글자 이상
     @Column(nullable = false)
     private String password;
+    // softdelete 논리형 추가
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
 
     public User(String name, String email, String password) {
         this.name = name;
@@ -32,8 +40,11 @@ public class User extends BaseEntity {
         this.password = password;
     }
 
-    public void update(String name, String email) {
-        this.name = name;
+    public void update(String email) {
         this.email = email;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
     }
 }

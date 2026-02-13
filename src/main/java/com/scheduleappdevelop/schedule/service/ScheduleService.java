@@ -31,20 +31,15 @@ public class ScheduleService {
     // pagination
     @Transactional(readOnly = true)
     public Page<GetAllScheduleWithPageResponse> findAllWithPage(Pageable pageable) {
-        Page<Schedule> schedules = scheduleRepository.findAll(pageable);
-
-        // Page 객체는 map 메서드를 제공한다.
-//        return schedules.map(schedule -> new GetAllScheduleWithPageResponse(schedule));
-        // 람다 -> 메서드 참조
-        return schedules.map(GetAllScheduleWithPageResponse::new);
+        return scheduleRepository.findScheduleByPage(pageable);
     }
 
     // (POST 요청을 받은 Controller가 Service에게 넘겨서 실제로 로직이 실행되는 곳)
 
     @Transactional
-    public CreateScheduleResponse save(CreateScheduleRequest request) {
-        User user = userRepository.findById(request.getUserId()).orElseThrow(
-                () -> new UserNotFoundException("없는 유저입니다.")
+    public CreateScheduleResponse save(CreateScheduleRequest request, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("존재하지 않는 유저입니다.")
         );
         Schedule schedule = new Schedule(
                 user,
@@ -79,7 +74,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public GetOneScheduleResponse findOne(Long scheduleId) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new ScheduleNotFoundException("없는 일정입니다.")
+                () -> new ScheduleNotFoundException("존재하지 않는 일정입니다.")
         );
         return new GetOneScheduleResponse(schedule);
     }
@@ -87,22 +82,28 @@ public class ScheduleService {
     @Transactional
     public UpdateScheduleResponse update(Long scheduleId, UpdateScheduleRequest request) {
         Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
-                () -> new ScheduleNotFoundException("없는 일정입니다.")
+                () -> new ScheduleNotFoundException("존재하지 않는 일정입니다.")
         );
-        // 수정시 비밀번호 일치한지 확인
-        if (!schedule.getUser().getPassword().equals(request.getPassword())) {
-            throw new LoginUnauthorizedException("비밀번호가 일치하지 않습니다.");
-        }
         schedule.update(request.getTitle(), request.getContent());
         return new UpdateScheduleResponse(schedule);
     }
 
     @Transactional
     public void deleteSchedule(Long scheduleId) {
-        boolean existence = scheduleRepository.existsById(scheduleId);
-        if (!existence) {
-            throw new ScheduleNotFoundException("없는 일정입니다.");
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new ScheduleNotFoundException("존재하지 않는 일정입니다.")
+        );
+        scheduleRepository.delete(schedule);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetAllScheduleResponse> findAllByUserId(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new UserNotFoundException("존재하지 않는 유저입니다.");
         }
-        scheduleRepository.deleteById(scheduleId);
+        return scheduleRepository.findAllByUserId(userId)
+                .stream()
+                .map(GetAllScheduleResponse::new)
+                .toList();
     }
 }

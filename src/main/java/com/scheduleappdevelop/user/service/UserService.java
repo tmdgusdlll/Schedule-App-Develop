@@ -1,9 +1,13 @@
 package com.scheduleappdevelop.user.service;
 
+import com.scheduleappdevelop.comment.entity.Comment;
+import com.scheduleappdevelop.comment.repository.CommentRepository;
 import com.scheduleappdevelop.config.PasswordEncoder;
 import com.scheduleappdevelop.exception.AlreadyExistEmailException;
 import com.scheduleappdevelop.exception.LoginUnauthorizedException;
 import com.scheduleappdevelop.exception.UserNotFoundException;
+import com.scheduleappdevelop.schedule.entity.Schedule;
+import com.scheduleappdevelop.schedule.repository.ScheduleRepository;
 import com.scheduleappdevelop.user.dto.*;
 import com.scheduleappdevelop.user.entity.User;
 import com.scheduleappdevelop.user.repository.UserRepository;
@@ -18,6 +22,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final CommentRepository commentRepository;
 
     // PasswordEncoder 주입
     private final PasswordEncoder passwordEncoder;
@@ -80,20 +86,36 @@ public class UserService {
 
     @Transactional
     public UpdateUserResponse update(Long userId, UpdateUserRequest request) {
+        // 수정할 유저 찾기
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("없는 유저입니다.")
         );
-        user.update(request.getName(), request.getEmail());
-        return new UpdateUserResponse(user.getId(),user.getName(),user.getEmail());
+        // 수정할 이메일과 유저 이메일이 같고 수정할 이메일이 이미 존재한다면 예외
+        if (!request.getEmail().equals(user.getEmail())
+                && userRepository.existsByEmail(request.getEmail())) {
+            throw new AlreadyExistEmailException("이미 존재하는 이메일입니다.");
+        }
+        user.update(request.getEmail());
+        return new UpdateUserResponse(user.getId(), user.getName(), user.getEmail());
     }
 
     @Transactional
     public void delete(Long userId) {
-        boolean existence = userRepository.existsById(userId);
-        if (!existence) {
-            throw new UserNotFoundException("없는 유저입니다.");
-        }
-        userRepository.deleteById(userId);
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("존재하지 않는 유저입니다.")
+        );
+        List<Comment> comments = commentRepository.findAllByUserId((userId));
+        commentRepository.deleteAll(comments);
+
+        List<Schedule> schedules = scheduleRepository.findAllByUserId((userId));
+        scheduleRepository.deleteAll(schedules);
+
+        userRepository.delete(user);
+//        boolean existence = userRepository.existsById(userId);
+//        if (!existence) {
+//            throw new UserNotFoundException("없는 유저입니다.");
+//        }
+//        userRepository.deleteById(userId);
     }
 }
 

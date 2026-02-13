@@ -7,6 +7,7 @@ import com.scheduleappdevelop.comment.entity.Comment;
 import com.scheduleappdevelop.comment.repository.CommentRepository;
 import com.scheduleappdevelop.exception.ScheduleNotFoundException;
 import com.scheduleappdevelop.exception.UserNotFoundException;
+import com.scheduleappdevelop.schedule.dto.GetAllScheduleResponse;
 import com.scheduleappdevelop.schedule.entity.Schedule;
 import com.scheduleappdevelop.schedule.repository.ScheduleRepository;
 import com.scheduleappdevelop.user.entity.User;
@@ -14,6 +15,7 @@ import com.scheduleappdevelop.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +59,17 @@ public class CommentService {
                 .stream()
 //                .map(comment -> new GetCommentResponse(comment))
                 .map(GetCommentResponse::new) // 람다 -> 메서드 참조
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetCommentResponse> findAllCommentBySchedule(Long scheduleId) {
+        scheduleRepository.findById(scheduleId).orElseThrow(
+                () -> new ScheduleNotFoundException("존재하지 않는 일정입니다.")
+        );
+        return commentRepository.findAllCommentsByScheduleId((scheduleId))
+                .stream()
+                .map(GetCommentResponse::new)
                 .toList();
     }
 }

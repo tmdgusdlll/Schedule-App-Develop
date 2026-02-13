@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.Optional;
 
@@ -14,6 +16,8 @@ import java.util.Optional;
 @Entity
 @Table(name = "comments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE comments SET is_deleted = true WHERE id = ?") // softdelete (삭제가 업데이트로)
+@SQLRestriction("is_deleted = false")
 public class Comment extends BaseEntity {
 
     @Id
@@ -32,9 +36,16 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted = false;
+
     public Comment(String content, Schedule schedule, User user) {
         this.content = content;
         this.schedule = schedule;
         this.user = user;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
     }
 }

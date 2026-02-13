@@ -17,6 +17,7 @@ import java.util.List;
 public class CommentController {
     private final CommentService commentService;
 
+
     // 댓글 생성(저장)
     @PostMapping("/schedules/{scheduleId}/comments")
     public ResponseEntity<CreateCommentResponse> create(
@@ -34,11 +35,11 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(commentService.findAll());
     }
 
-    // TODO: 한 일정의 모든 댓글 조회 만들어보기
-//    @GetMapping("/schedules/{scheduleId}/comments")
-//    public ResponseEntity<List<GetCommentResponse>> getAllComments(
-//            @PathVariable Long scheduleId
-//    ) {
-//        return ResponseEntity.status(HttpStatus.OK).body(commentService.findAllCommentBySchedule());
-//    }
+    // TODO: 한 일정의 모든 댓글 조회 만들어보기.ok
+    @GetMapping("/schedules/{scheduleId}/comments")
+    public ResponseEntity<List<GetCommentResponse>> getAllComments(
+            @PathVariable Long scheduleId
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(commentService.findAllCommentBySchedule(scheduleId));
+    }
 }
